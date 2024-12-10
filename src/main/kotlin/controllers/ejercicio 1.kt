@@ -78,7 +78,8 @@ fun calculariva(tipo: String, dia: Int, mes: Int, anyo: Int) : Int{
         dia >= 1 && mes >= 1 && anyo >= 1995 && anyo<2010 && tipo =="super" -> 4
 
         //2010
-        dia >= 1 && mes >= 1 && anyo >= 2010 && anyo<2012 && tipo =="general" -> 16
+        dia >= 1 && mes >= 1 && anyo >= 2010 && anyo<=2012 && tipo =="general" -> if(anyo == 2012 && mes<=7 && dia<15){return 18}
+        dia >= 1 && mes >= 1 && anyo >= 2010 && anyo<=2012 && tipo =="reduit" -> if(anyo == 2012 && mes<=7 && dia<15){return 8}
 
 
 
