@@ -15,9 +15,11 @@ fun main() {
     var (dia, mes, anyo) = pedirfecha("Introduce una fecha:", scan)
 
 
-    //Llamar Funcion Processo
+    // Crear Array de los datos
+    var grafica = array()
 
-    calculariva(iva, dia, mes, anyo)
+    //Llamar Funcion Processo
+    calculariva(grafica, iva, dia, mes, anyo)
 
 
 
@@ -49,37 +51,63 @@ fun pedirfecha(msg: String, scan: Scanner): Triple<Int, Int, Int> {
 
 // Funcion proceso de deolver el numero porcentaje que debe devolver
 
-fun calculariva(tipo: String, dia: Int, mes: Int, anyo: Int) : Int{
+fun array(): Array<Int>{
+
+    // Crear Array de los datos
+    val array= arrayOf(
+        arrayOf(1, 1, 1986, 12, 6, 12, 0),
+        arrayOf(1, 1, 1992, 15, 6, 15, 0),
+        arrayOf(1, 1, 1993, 15, 6, 3, 0),
+        arrayOf(1, 1, 1995, 16, 7, 4, 0),
+        arrayOf(1, 1, 2010, 18, 8, 4, 0),
+        arrayOf(15, 7, 2012, 21, 10, 4, 0)
+    )
+    return array()
+
+}
 
 
-    when{
-        // No iva
-        tipo == "exempt" -> 0
+fun calculariva(grafica: Array<Array<Int>>, tipo: String, dia: Int, mes: Int, anyo: Int) : Any{
 
-        //1986
-        dia >= 1 && mes >= 1 && anyo >= 1986 && anyo<1992 && tipo =="general" -> 12
-        dia >= 1 && mes >= 1 && anyo >= 1986 && anyo<1992 && tipo =="reduit" -> 6
-        dia >= 1 && mes >= 1 && anyo >= 1986 && anyo<1992 && tipo =="superreduit" -> 12
+    //Variable definir tamanyo columnas
+    var column = 7
+
+    // Recorrer Array Fila menos la ultima fila
+    for (i in 0 until grafica.lastIndex){
+
+        //comprobar que no es el ultimo
+        if (i != 5){
+
+            // Comprobar anyo de la fila actual y el siguiente
+            if(anyo == grafica[i][2] ||anyo > grafica[i][2] && anyo < grafica[i+1][2]) {
+
+                // Comprobar el tipo de IVA
+                if (tipo == "general") {
+                    return grafica[i][4]
+                } else if (tipo == "reduit") {
+                    return grafica[i][5]
+                } else if (tipo == "superreduit") {
+                    return grafica[i][6]
+                } else {
+                    return grafica[i][7]
+                }
+            }
+
+        }else{
+
+            // Comprobar anyo de la fila actual y el siguiente
+            if(anyo == grafica[i][2] ||anyo > grafica[i][2] && anyo < grafica[i+1][2]) {
 
 
-        //1992
-        dia >= 1 && mes >= 1 && anyo >= 1992 && anyo<1993 && tipo =="general" -> 15
-        dia >= 1 && mes >= 1 && anyo >= 1992 && anyo<1993 && tipo =="reduit" -> 6
-        dia >= 1 && mes >= 1 && anyo >= 1992 && anyo<1993 && tipo =="superreduit" -> 15
 
-        //1993
-        dia >= 1 && mes >= 1 && anyo >= 1993 && anyo<1995 && tipo =="general" -> 16
-        dia >= 1 && mes >= 1 && anyo >= 1993 && anyo<1995 && tipo =="reduit" -> 6
-        dia >= 1 && mes >= 1 && anyo >= 1993 && anyo<1995 && tipo =="superreduit" -> 3
+            }
 
-        //1995
-        dia >= 1 && mes >= 1 && anyo >= 1995 && anyo<2010 && tipo =="general" -> 16
-        dia >= 1 && mes >= 1 && anyo >= 1995 && anyo<2010 && tipo =="reduit" -> 7
-        dia >= 1 && mes >= 1 && anyo >= 1995 && anyo<2010 && tipo =="super" -> 4
 
-        //2010
-        dia >= 1 && mes >= 1 && anyo >= 2010 && anyo<=2012 && tipo =="general" -> if(anyo == 2012 && mes<=7 && dia<15){return 18}
-        dia >= 1 && mes >= 1 && anyo >= 2010 && anyo<=2012 && tipo =="reduit" -> if(anyo == 2012 && mes<=7 && dia<15){return 8}
+        }
+
+
+
+
 
 
 
@@ -88,9 +116,45 @@ fun calculariva(tipo: String, dia: Int, mes: Int, anyo: Int) : Int{
 
 
 
+}
+
+
+
+
+
+
+/*
+when{
+    // No iva
+    tipo == "exempt" -> 0
+
+    //1986
+    dia >= 1 && mes >= 1 && anyo >= 1986 && anyo<1992 && tipo =="general" -> 12
+    dia >= 1 && mes >= 1 && anyo >= 1986 && anyo<1992 && tipo =="reduit" -> 6
+    dia >= 1 && mes >= 1 && anyo >= 1986 && anyo<1992 && tipo =="superreduit" -> 12
+
+
+    //1992
+    dia >= 1 && mes >= 1 && anyo >= 1992 && anyo<1993 && tipo =="general" -> 15
+    dia >= 1 && mes >= 1 && anyo >= 1992 && anyo<1993 && tipo =="reduit" -> 6
+    dia >= 1 && mes >= 1 && anyo >= 1992 && anyo<1993 && tipo =="superreduit" -> 15
+
+    //1993
+    dia >= 1 && mes >= 1 && anyo >= 1993 && anyo<1995 && tipo =="general" -> 16
+    dia >= 1 && mes >= 1 && anyo >= 1993 && anyo<1995 && tipo =="reduit" -> 6
+    dia >= 1 && mes >= 1 && anyo >= 1993 && anyo<1995 && tipo =="superreduit" -> 3
+
+    //1995
+    dia >= 1 && mes >= 1 && anyo >= 1995 && anyo<2010 && tipo =="general" -> 16
+    dia >= 1 && mes >= 1 && anyo >= 1995 && anyo<2010 && tipo =="reduit" -> 7
+    dia >= 1 && mes >= 1 && anyo >= 1995 && anyo<2010 && tipo =="super" -> 4
+
+    //2010
+    dia >= 1 && mes >= 1 && anyo >= 2010 && anyo<=2012 && tipo =="general" -> if(anyo == 2012 && mes<=7 && dia<15){return 18}
+    dia >= 1 && mes >= 1 && anyo >= 2010 && anyo<=2012 && tipo =="reduit" -> if(anyo == 2012 && mes<=7 && dia<15){return 8}
 
 
 
 
 }
-
+*/
