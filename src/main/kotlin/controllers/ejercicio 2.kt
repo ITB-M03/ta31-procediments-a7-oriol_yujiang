@@ -1,53 +1,75 @@
-package org.example.controllers
+package controllers.Ejercicio_2
+
+import utilities.abrirScanner
+import utilities.cerrarScanner
 import java.util.*
 
-
 fun main() {
-    val sc = Scanner(System.`in`)
-    println("Benvingut al convertidor de números romans!")
-    var continuar = true
+    // Abrimos el scanner para la entrada del usuario
+    val scan: Scanner = abrirScanner()
 
-    while (continuar) {
-        println("\nIntroduïu un número enter entre 1 i 3999: ")
-        val numero = sc.nextInt()
+    try {
+        // Solicitamos un número válido del usuario
+        val numero = solicitarNumero("Introduce un número del 1 al 3999: ", scan)
 
-        if (esValid(numero)) {
-            val numeralRoma = roman(numero)
-            mostrarResultat(numero, numeralRoma)
-        } else {
-            mostrarError()
+        // Convertimos el número a su representación romana
+        val numeroRomano = convertirARomano(numero)
+
+        // Mostramos el resultado
+        mostrarResultado(numero, numeroRomano)
+    } finally {
+        // Cerramos el scanner
+        cerrarScanner(scan)
+    }
+}
+
+// Solicita un número al usuario con validación de rango
+fun solicitarNumero(mensaje: String, scan: Scanner): Int {
+    var numero: Int
+    do {
+        print(mensaje)
+        numero = scan.nextInt()
+        if (numero !in 1..3999) {
+            println("Error: El número debe estar entre 1 y 3999. Inténtelo de nuevo.")
         }
+    } while (numero !in 1..3999)
+    return numero
+}
 
-        println("Voleu convertir un altre número? (sí = 1, no = 0): ")
-        continuar = sc.nextInt() == 1
+// Convierte un número entero a su representación en números romanos
+fun convertirARomano(num: Int): String {
+    // Lista de pares con los símbolos romanos y sus valores
+    val simbolosRomanos = listOf(
+        "M" to 1000,
+        "CM" to 900,
+        "D" to 500,
+        "CD" to 400,
+        "C" to 100,
+        "XC" to 90,
+        "L" to 50,
+        "XL" to 40,
+        "X" to 10,
+        "IX" to 9,
+        "V" to 5,
+        "IV" to 4,
+        "I" to 1
+    )
+
+    // Construcción del número romano
+    val resultado = StringBuilder()
+    var resto = num
+
+    for ((simbolo, valor) in simbolosRomanos) {
+        while (resto >= valor) {
+            resultado.append(simbolo)
+            resto -= valor
+        }
     }
 
-    println("Gràcies per utilitzar el convertidor de números romans!")
+    return resultado.toString()
 }
-fun esValid(numero: Int): Boolean {
-    // Determinem si el número està dins del rang vàlid
-    return numero in 1..3999
-}
-fun roman(number: Int): String {
-    // Arrays que representen les unitats de miler, centenes, desenes i unitats
-    val millares = arrayOf("", "M", "MM", "MMM")
-    val centenas = arrayOf("", "C", "CC", "CCC", "CD", "D", "DC", "DCC", "DCCC", "CM")
-    val decenas = arrayOf("", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC")
-    val unidades = arrayOf("", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX")
-    // Descomponemos el número en milers, centenes, desenes i unitats
-    val mil = number / 1000
-    val cen = (number % 1000) / 100
-    val dec = (number % 100) / 10
-    val uni = number % 10
 
-    // Construimos el número romano concatenant els valors dels arrays
-    return millares[mil] + centenas[cen] + decenas[dec] + unidades[uni]
-}
-fun mostrarResultat(numero: Int, numeralRoma: String) {
-// Mostra el resultat del número convertit
-    println("El número $numero en números romans és: $numeralRoma")
-}
-fun mostrarError() {
-    //mostraremos el error sobre si no es correcto el pasar de numero a numeros romanos
-    println("Error: Número fora de rang. Si us plau, introduïu un valor entre 1 i 3999.")
+// Muestra el resultado final por pantalla
+fun mostrarResultado(numero: Int, numeroRomano: String) {
+    println("El número $numero en romano es: $numeroRomano")
 }
