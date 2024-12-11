@@ -5,41 +5,38 @@ import utilities.cerrarScanner
 import java.util.*
 
 fun main() {
-    // Abrimos el scanner para la entrada del usuario
+    // Abrimos el scanner para leer la entrada del usuario
     val scan: Scanner = abrirScanner()
 
-    try {
-        // Solicitamos un número válido del usuario
-        val numero = solicitarNumero("Introduce un número del 1 al 3999: ", scan)
+    // Pedimos al usuario que introduzca un número dentro del rango permitido
+    val numero = pedirNumero("Introduce un número del 1 al 3999: ", scan)
 
-        // Convertimos el número a su representación romana
-        val numeroRomano = convertirARomano(numero)
+    // Convertimos el número entero a su equivalente en números romanos
+    val numeroRomano = Roman(numero)
 
-        // Mostramos el resultado
-        mostrarResultado(numero, numeroRomano)
-    } finally {
-        // Cerramos el scanner
-        cerrarScanner(scan)
-    }
+    // Mostramos el resultado en pantalla
+    mostrarPantalla(numeroRomano)
+
+    // Cerramos el scanner al terminar
+    cerrarScanner(scan)
 }
 
-// Solicita un número al usuario con validación de rango
-fun solicitarNumero(mensaje: String, scan: Scanner): Int {
-    var numero: Int
-    do {
-        print(mensaje)
-        numero = scan.nextInt()
-        if (numero !in 1..3999) {
-            println("Error: El número debe estar entre 1 y 3999. Inténtelo de nuevo.")
-        }
-    } while (numero !in 1..3999)
-    return numero
+// Función para solicitar un número al usuario
+fun pedirNumero(msg: String, scan: Scanner): Int {
+    // Mostramos el mensaje que solicita la entrada del usuario
+    print(msg)
+
+    // Leemos el número ingresado por el usuario
+    val num: Int = scan.nextInt()
+
+    // Devolvemos el número ingresado
+    return num
 }
 
-// Convierte un número entero a su representación en números romanos
-fun convertirARomano(num: Int): String {
-    // Lista de pares con los símbolos romanos y sus valores
-    val simbolosRomanos = listOf(
+// Función que convierte un número entero en su representación en números romanos
+fun Roman(num: Int): String {
+    // Lista de pares que relacionan los símbolos romanos con sus valores
+    val numeroRomano = listOf(
         "M" to 1000,
         "CM" to 900,
         "D" to 500,
@@ -55,21 +52,25 @@ fun convertirARomano(num: Int): String {
         "I" to 1
     )
 
-    // Construcción del número romano
-    val resultado = StringBuilder()
+    // Variable que almacenará el resultado final en formato romano
+    var resultado = ""
+
+    // Variable temporal para el cálculo del número restante
     var resto = num
 
-    for ((simbolo, valor) in simbolosRomanos) {
+    // Iteramos sobre los pares de la lista para construir el número romano
+    for ((simbolo, valor) in numeroRomano) {
         while (resto >= valor) {
-            resultado.append(simbolo)
-            resto -= valor
+            resultado += simbolo // Añadimos el símbolo correspondiente
+            resto -= valor       // Reducimos el resto por el valor correspondiente
         }
     }
 
-    return resultado.toString()
+    // Devolvemos el número en formato romano
+    return resultado
 }
 
-// Muestra el resultado final por pantalla
-fun mostrarResultado(numero: Int, numeroRomano: String) {
-    println("El número $numero en romano es: $numeroRomano")
+// Función para mostrar el resultado en pantalla
+fun mostrarPantalla(numero: String) {
+    println("El número en romano es: $numero")
 }
