@@ -1,8 +1,12 @@
-package org.example.controllers
 
+
+package controllers.Ejercicio_1
+
+import java.time.LocalDate
 import utilities.abrirScanner
 import utilities.cerrarScanner
 import java.util.*
+import kotlin.math.floor
 
 fun main() {
     //Llamamos a la funcion de abrir el Scanner
@@ -11,17 +15,21 @@ fun main() {
 
     // Escaneamos los numeros
     var precio = pedirnum("Introduce un precio:", scan)
+    scan.nextLine()
     var iva = pediriva("Introduce un tipo de iva:", scan)
-    var (dia, mes, anyo) = pedirfecha("Introduce una fecha:", scan)
-
+    var (dia, mes, anyo) = pedirfecha("Introduce una fecha, formato(dd-mm-yyyy):", scan)
 
     // Crear Array de los datos
     var grafica = array()
 
-    //Llamar Funcion Processo
-    calculariva(grafica, iva, dia, mes, anyo)
+    //Llamar Funcion Processo para determinar cual iba aplicar
+    var tipoiva = determinar(grafica, iva, dia, mes, anyo)
 
+    //Calcular iva
+    var calculo = calculariva(precio, tipoiva)
 
+    // Mostrar resultado
+    mostraresultado (calculo)
 
 }
 
@@ -42,7 +50,7 @@ fun pediriva(msg: String, scan: Scanner): String {
 // Funcion pedir Fecha escaneamos separando y devolvemos individualmente
 fun pedirfecha(msg: String, scan: Scanner): Triple<Int, Int, Int> {
     print(msg)
-    var a = scan.nextLine() .split("-") .toMutableList()
+    var a = scan.nextLine() .split("-")
     return Triple(a[0].toInt(), a[1].toInt(), a[2].toInt())
 
 }
@@ -51,7 +59,7 @@ fun pedirfecha(msg: String, scan: Scanner): Triple<Int, Int, Int> {
 
 // Funcion proceso de deolver el numero porcentaje que debe devolver
 
-fun array(): Array<Int>{
+fun array(): Array<Array<Int>> {
 
     // Crear Array de los datos
     val array= arrayOf(
@@ -62,99 +70,117 @@ fun array(): Array<Int>{
         arrayOf(1, 1, 2010, 18, 8, 4, 0),
         arrayOf(15, 7, 2012, 21, 10, 4, 0)
     )
-    return array()
+    return array
 
 }
 
 
-fun calculariva(grafica: Array<Array<Int>>, tipo: String, dia: Int, mes: Int, anyo: Int) : Any{
+fun determinar(grafica: Array<Array<Int>>, tipo: String, dia: Int, mes: Int, anyo: Int) :Int{
 
-    //Variable definir tamanyo columnas
-    var column = 7
+    // Definimos variable con un valor predeter.
+    var cant : Int = 21
 
     // Recorrer Array Fila menos la ultima fila
     for (i in 0 until grafica.lastIndex){
 
-        //comprobar que no es el ultimo
-        if (i != 5){
+        //Variable guardar fecha primero
+        var fechapr = LocalDate.of(grafica[0][2], grafica[0][1], grafica[0][0])
+        // Guardar fecha ultimo
+        var fechalast = LocalDate.of(grafica[5][2], grafica[5][1], grafica[5][0])
 
-            // Comprobar anyo de la fila actual y el siguiente
-            if(anyo == grafica[i][2] ||anyo > grafica[i][2] && anyo < grafica[i+1][2]) {
+        //Variable guardar fecha usuario
+        var fechaus = LocalDate.of(anyo, mes, dia)
 
-                // Comprobar el tipo de IVA
+        // Variable guardar fecha actual
+        var fechac = LocalDate.of(grafica[i][2], grafica[i][1], grafica[i][0])
+
+        // Variable fecha siguiente
+        var fechades = LocalDate.of(grafica[i+1][2], grafica[i+1][1], grafica[i+1][0])
+
+        //comprobar que no es el ultimo y que no sea menor o mayor a los datos de la lista
+        if (i != 5 &&  fechac> fechapr && fechac>fechapr && fechac<fechalast){
+
+                // Comparar fechas actual y el siguiente
+            if(fechaus >= fechac && fechaus <fechades){
+                // Comparar el tipo de IVA
                 if (tipo == "general") {
-                    return grafica[i][4]
+                    cant = grafica[i][3]
                 } else if (tipo == "reduit") {
-                    return grafica[i][5]
+                    cant = grafica[i][4]
                 } else if (tipo == "superreduit") {
-                    return grafica[i][6]
+                    cant = grafica[i][5]
                 } else {
-                    return grafica[i][7]
+                    cant = grafica[i][6]
                 }
             }
 
         }else{
 
-            // Comprobar anyo de la fila actual y el siguiente
-            if(anyo == grafica[i][2] ||anyo > grafica[i][2] && anyo < grafica[i+1][2]) {
-
-
-
+            //Comprobar si es menor a la fecha de la lista si es menor aplicamos el primero
+            if (fechac< LocalDate.of(grafica[0][2], grafica[0][1], grafica[0][0])){
+                // Comparar el tipo de IVA
+                if (tipo == "general") {
+                    cant = grafica[0][3]
+                } else if (tipo == "reduit") {
+                    cant = grafica[0][4]
+                } else if (tipo == "superreduit") {
+                    cant = grafica[0][5]
+                } else {
+                    cant = grafica[0][6]
+                }
+                // Comprobar si es mayor a la fecha de lista si es mayor aplicamos el ultimo
+            }else if (fechac< LocalDate.of(grafica[5][2], grafica[5][1], grafica[5][0])) {
+                // Comparar el tipo de IVA
+                if (tipo == "general") {
+                    cant = grafica[5][3]
+                } else if (tipo == "reduit") {
+                    cant = grafica[5][4]
+                } else if (tipo == "superreduit") {
+                    cant = grafica[5][5]
+                } else {
+                    cant = grafica[5][6]
+                }
+            // Comprobar anyo de la fila actual y el anterior
+            }else if (fechaus <= fechac  && fechaus > LocalDate.of(grafica[i-1][2],grafica[i-1][1], grafica[i-1][0])){
+                if (tipo == "general") {
+                    cant = grafica[i][3]
+                } else if (tipo == "reduit") {
+                    cant = grafica[i][4]
+                } else if (tipo == "superreduit") {
+                    cant = grafica[i][5]
+                } else {
+                    cant =  grafica[i][6]
+                }
             }
-
 
         }
 
-
-
-
-
-
-
-
     }
+    return cant
 
 
+}
 
+
+// Funcion calcular IVA
+
+fun calculariva(precio: Float, tipo: Int) : Float{
+
+    var num1 = tipo.toFloat()
+    var calculo = (num1/100)*precio
+    return calculo
+
+}
+
+
+// Funcion mostrar el resultado
+
+fun mostraresultado(num: Float){
+
+    println("El precio final con iva es: $num")
 }
 
 
 
 
 
-
-/*
-when{
-    // No iva
-    tipo == "exempt" -> 0
-
-    //1986
-    dia >= 1 && mes >= 1 && anyo >= 1986 && anyo<1992 && tipo =="general" -> 12
-    dia >= 1 && mes >= 1 && anyo >= 1986 && anyo<1992 && tipo =="reduit" -> 6
-    dia >= 1 && mes >= 1 && anyo >= 1986 && anyo<1992 && tipo =="superreduit" -> 12
-
-
-    //1992
-    dia >= 1 && mes >= 1 && anyo >= 1992 && anyo<1993 && tipo =="general" -> 15
-    dia >= 1 && mes >= 1 && anyo >= 1992 && anyo<1993 && tipo =="reduit" -> 6
-    dia >= 1 && mes >= 1 && anyo >= 1992 && anyo<1993 && tipo =="superreduit" -> 15
-
-    //1993
-    dia >= 1 && mes >= 1 && anyo >= 1993 && anyo<1995 && tipo =="general" -> 16
-    dia >= 1 && mes >= 1 && anyo >= 1993 && anyo<1995 && tipo =="reduit" -> 6
-    dia >= 1 && mes >= 1 && anyo >= 1993 && anyo<1995 && tipo =="superreduit" -> 3
-
-    //1995
-    dia >= 1 && mes >= 1 && anyo >= 1995 && anyo<2010 && tipo =="general" -> 16
-    dia >= 1 && mes >= 1 && anyo >= 1995 && anyo<2010 && tipo =="reduit" -> 7
-    dia >= 1 && mes >= 1 && anyo >= 1995 && anyo<2010 && tipo =="super" -> 4
-
-    //2010
-    dia >= 1 && mes >= 1 && anyo >= 2010 && anyo<=2012 && tipo =="general" -> if(anyo == 2012 && mes<=7 && dia<15){return 18}
-    dia >= 1 && mes >= 1 && anyo >= 2010 && anyo<=2012 && tipo =="reduit" -> if(anyo == 2012 && mes<=7 && dia<15){return 8}
-
-
-
-
-}
-*/
