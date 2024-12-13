@@ -5,11 +5,14 @@ import utilities.abrirScanner
 import utilities.cerrarScanner
 
 fun main(){
+    val scan : Scanner = abrirScanner()
     //primero de todo pediremos el titulo
     val texto = pedirTexto("Escriu el text que vols centrar:")
 
     //después centramos el texto que hemos pedido como si fuera un título usando una función
     mostrarTituloCentrado(texto)
+
+    cerrarScanner(scan)
 }
 
 fun pedirTexto(msg: String): String {
