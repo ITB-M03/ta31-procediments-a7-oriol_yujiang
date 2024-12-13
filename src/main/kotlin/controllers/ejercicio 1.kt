@@ -31,8 +31,8 @@ fun main() {
     // Mostrar resultado
     mostraresultado (calculo)
 
+    cerrarScanner(scan)
 }
-
 
 
 //Función para pedir un float
@@ -54,7 +54,6 @@ fun pedirfecha(msg: String, scan: Scanner): Triple<Int, Int, Int> {
     return Triple(a[0].toInt(), a[1].toInt(), a[2].toInt())
 
 }
-
 
 
 // Funcion proceso de deolver el numero porcentaje que debe devolver
@@ -171,7 +170,6 @@ fun calculariva(precio: Float, tipo: Int) : Float{
     return calculo
 
 }
-
 
 // Funcion mostrar el resultado
 
