@@ -24,7 +24,7 @@ data class FilaTabla(
     val ivaGeneral: Int,
     val ivaReduit: Int,
     val ivaSuperreduit: Int,
-    val ivaExtra: Int
+    val Exempt: Int
 )
 
 /**
@@ -109,35 +109,52 @@ fun generarTabla(): List<FilaTabla> {
  * @param anyo Año de la fecha proporcionada.
  * @return Valor del IVA correspondiente.
  */
-fun determinar(
-    grafica: List<FilaTabla>,
-    tipo: String,
-    dia: Int,
-    mes: Int,
-    anyo: Int
-): Int {
+fun determinar(grafica: List<FilaTabla>, tipo: String, dia: Int, mes: Int, anyo: Int): Int {
+
     var cant: Int = 21
     val fechaUs = LocalDate.of(anyo, mes, dia)
 
     for (i in grafica.indices) {
+
+        val primeraFecha = grafica[0]
         val filaActual = grafica[i]
+
         val fechaActual = LocalDate.of(filaActual.anyo, filaActual.mes, filaActual.dia)
+
+
         val fechaSiguiente = if (i < grafica.lastIndex) {
             val filaSiguiente = grafica[i + 1]
             LocalDate.of(filaSiguiente.anyo, filaSiguiente.mes, filaSiguiente.dia)
         } else null
 
-        if ((fechaUs >= fechaActual && (fechaSiguiente == null || fechaUs < fechaSiguiente))) {
+        if (fechaUs <= LocalDate.of(primeraFecha.anyo, primeraFecha.mes, primeraFecha.dia)){
+
+            cant = when (tipo) {
+                "general" -> primeraFecha.ivaGeneral
+                "reduit" -> primeraFecha.ivaReduit
+                "superreduit" -> primeraFecha.ivaSuperreduit
+                else -> primeraFecha.Exempt
+            }
+
+
+        }else if ((fechaUs >= fechaActual && (fechaSiguiente == null || fechaUs < fechaSiguiente))) {
             cant = when (tipo) {
                 "general" -> filaActual.ivaGeneral
                 "reduit" -> filaActual.ivaReduit
                 "superreduit" -> filaActual.ivaSuperreduit
-                else -> filaActual.ivaExtra
+                else -> filaActual.Exempt
             }
-            break
+
+        }else if ((fechaUs >= fechaActual && (fechaSiguiente == null || fechaUs < fechaSiguiente))) {
+            cant = when (tipo) {
+                "general" -> filaActual.ivaGeneral
+                "reduit" -> filaActual.ivaReduit
+                "superreduit" -> filaActual.ivaSuperreduit
+                else -> filaActual.Exempt
+            }
+
         }
     }
-
     return cant
 }
 
