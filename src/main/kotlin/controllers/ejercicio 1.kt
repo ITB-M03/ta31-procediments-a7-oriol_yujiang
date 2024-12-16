@@ -6,7 +6,17 @@ import utilities.cerrarScanner
 import java.util.*
 import kotlin.math.floor
 
-// Definimos el Data Class
+/**
+ *
+ * @since 16/12/2024 v1.0.0
+ * @author Oriol Callao, Yujiang Xia
+ *
+ * ## Main
+ * @param scan Abrir Scanner
+ * @param menu Llamar la funcion del menu
+ *
+ */
+
 data class FilaTabla(
     val dia: Int,
     val mes: Int,
@@ -17,51 +27,68 @@ data class FilaTabla(
     val ivaExtra: Int
 )
 
+/**
+ * Función principal del programa.
+ * - Abre un `Scanner` para leer entradas del usuario.
+ * - Solicita precio, tipo de IVA y fecha.
+ * - Calcula el precio final aplicando el IVA correspondiente.
+ * - Muestra el resultado.
+ */
 fun main() {
-    // Llamamos a la función de abrir el Scanner
     val scan: Scanner = abrirScanner()
 
-    // Escaneamos los números
     val precio = pedirnum("Introduce un precio:", scan)
     scan.nextLine()
     val iva = pediriva("Introduce un tipo de iva:", scan)
     val (dia, mes, anyo) = pedirfecha("Introduce una fecha, formato(dd-mm-yyyy):", scan)
 
-    // Crear lista de datos
     val grafica = generarTabla()
-
-    // Llamar función proceso para determinar cuál IVA aplicar
     val tipoiva = determinar(grafica, iva, dia, mes, anyo)
-
-    // Calcular IVA
     val calculo = calculariva(precio, tipoiva)
 
-    // Mostrar resultado
     mostrarResultado(calculo)
 
     cerrarScanner(scan)
 }
 
-// Función para pedir un float
+/**
+ * Solicita un número flotante al usuario.
+ * @param msg Mensaje que se muestra al usuario.
+ * @param scan Objeto `Scanner` para leer la entrada.
+ * @return Número flotante introducido por el usuario.
+ */
 fun pedirnum(msg: String, scan: Scanner): Float {
     print(msg)
     return scan.nextFloat()
 }
 
-// Función para escanear el tipo de IVA
+/**
+ * Solicita el tipo de IVA al usuario.
+ * @param msg Mensaje que se muestra al usuario.
+ * @param scan  Leer la entrada.
+ * @return Cadena que representa el tipo de IVA (general, reduit, etc.).
+ */
 fun pediriva(msg: String, scan: Scanner): String {
     print(msg)
     return scan.nextLine().lowercase()
 }
 
-// Función para pedir fecha, escaneando y separando los valores
+/**
+ * Solicita una fecha al usuario y la descompone en día, mes y año.
+ * @param msg Mensaje que se muestra al usuario.
+ * @param scan Objeto `Scanner` para leer la entrada.
+ * @return Triple con el día, mes y año.
+ */
 fun pedirfecha(msg: String, scan: Scanner): Triple<Int, Int, Int> {
     print(msg)
     val a = scan.nextLine().split("-")
     return Triple(a[0].toInt(), a[1].toInt(), a[2].toInt())
 }
 
-// Generar tabla con las filas representadas como objetos
+/**
+ * Genera la tabla histórica de tipos de IVA.
+ * @return Lista de objetos `FilaTabla` con los datos históricos.
+ */
 fun generarTabla(): List<FilaTabla> {
     return listOf(
         FilaTabla(1, 1, 1986, 12, 6, 12, 0),
@@ -73,7 +100,15 @@ fun generarTabla(): List<FilaTabla> {
     )
 }
 
-// Función para determinar el IVA basado en la tabla
+/**
+ * Determina el tipo de IVA aplicable según la tabla histórica y la fecha proporcionada.
+ * @param grafica Lista de objetos `FilaTabla` que representan la tabla histórica.
+ * @param tipo Tipo de IVA introducido por el usuario (general, reduit, etc.).
+ * @param dia Día de la fecha proporcionada.
+ * @param mes Mes de la fecha proporcionada.
+ * @param anyo Año de la fecha proporcionada.
+ * @return Valor del IVA correspondiente.
+ */
 fun determinar(
     grafica: List<FilaTabla>,
     tipo: String,
@@ -81,23 +116,17 @@ fun determinar(
     mes: Int,
     anyo: Int
 ): Int {
-    // Variable con un valor predeterminado
     var cant: Int = 21
-
-    // Fecha del usuario
     val fechaUs = LocalDate.of(anyo, mes, dia)
 
     for (i in grafica.indices) {
         val filaActual = grafica[i]
         val fechaActual = LocalDate.of(filaActual.anyo, filaActual.mes, filaActual.dia)
-
-        // Determinar la fecha siguiente (si no es la última fila)
         val fechaSiguiente = if (i < grafica.lastIndex) {
             val filaSiguiente = grafica[i + 1]
             LocalDate.of(filaSiguiente.anyo, filaSiguiente.mes, filaSiguiente.dia)
         } else null
 
-        // Comparar fechas
         if ((fechaUs >= fechaActual && (fechaSiguiente == null || fechaUs < fechaSiguiente))) {
             cant = when (tipo) {
                 "general" -> filaActual.ivaGeneral
@@ -112,14 +141,22 @@ fun determinar(
     return cant
 }
 
-// Función para calcular el IVA
+/**
+ * Calcula el precio final con IVA.
+ * @param precio Precio inicial.
+ * @param tipo Porcentaje de IVA a aplicar.
+ * @return Precio final con IVA incluido.
+ */
 fun calculariva(precio: Float, tipo: Int): Float {
     val num1 = tipo.toFloat()
-    var num2 = (num1 / 100) * precio
+    val num2 = (num1 / 100) * precio
     return num2 + precio
 }
 
-// Función para mostrar el resultado
+/**
+ * Muestra el resultado del cálculo del precio con IVA.
+ * @param num Precio final con IVA.
+ */
 fun mostrarResultado(num: Float) {
     println("El precio final con IVA es: $num")
 }
